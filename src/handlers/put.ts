@@ -18,10 +18,14 @@ export default defineHandler({
       cacheControl = 'max-age=31536000';
     }
 
+    const pathname = url.searchParams.get('pathname');
+    if (!pathname) {
+      return new Response(null, { status: 400 });
+    }
     const data = {
       url: url,
       downloadUrl: new URL('?download=1', url).toString(),
-      pathname: url.pathname,
+      pathname: pathname,
       size: blob.size,
       contentType,
       cacheControl,
@@ -29,13 +33,13 @@ export default defineHandler({
       contentDisposition,
     };
 
-    await Bun.write(path.join(storePath, url.pathname), blob, { createPath: true });
-    await Bun.write(path.join(storePath, url.pathname + '._vercel_mock_meta_'), JSON.stringify(data, undefined, 2), { createPath: true });
+    await Bun.write(path.join(storePath, pathname), blob, { createPath: true });
+    await Bun.write(path.join(storePath, pathname + '._vercel_mock_meta_'), JSON.stringify(data, undefined, 2), { createPath: true });
 
     return Response.json({
       url: url,
       downloadUrl: url,
-      pathname: url.pathname,
+      pathname: pathname,
       contentType,
       contentDisposition,
     });

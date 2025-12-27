@@ -10,17 +10,21 @@ export default defineHandler({
   async handle (url: URL, request) {
     // Copy
     const fromPath = url.searchParams.get('fromUrl')!;
+    const toPath = url.searchParams.get('pathname');
+    if (!toPath) {
+      return new Response(null, { status: 400 });
+    }
     const metaFile = Bun.file(path.join(storePath, fromPath + '._vercel_mock_meta_'));
     const file = Bun.file(path.join(storePath, fromPath));
     if (await metaFile.exists() && await file.exists()) {
       const meta = await metaFile.json();
       meta.url = new URL(url.pathname, url.origin).toString();
       meta.downloadUrl = new URL(url.pathname + '?download=1', url.origin).toString();
-      meta.pathname = url.pathname;
+      meta.pathname = toPath;
       meta.uploadedAt = new Date();
-      await fs.mkdir(path.dirname(path.join(storePath, url.pathname)), { recursive: true });
-      await Bun.write(path.join(storePath, url.pathname + '._vercel_mock_meta_'), JSON.stringify(meta, undefined, 2));
-      await fs.cp(path.join(storePath, fromPath), path.join(storePath, url.pathname));
+      await fs.mkdir(path.dirname(path.join(storePath, toPath)), { recursive: true });
+      await Bun.write(path.join(storePath, toPath + '._vercel_mock_meta_'), JSON.stringify(meta, undefined, 2));
+      await fs.cp(path.join(storePath, fromPath), path.join(storePath, toPath));
 
       return Response.json(meta);
     } else {

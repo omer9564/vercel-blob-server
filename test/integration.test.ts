@@ -43,7 +43,7 @@ describe('Vercel Blob Server Integration Tests', () => {
     const content = 'Hello, World!';
     const blob = new Blob([content], { type: 'text/plain' });
     
-    const response = await fetch(`${BASE_URL}/test-file.txt`, {
+    const response = await fetch(`${BASE_URL}/?pathname=test-file.txt`, {
       method: 'PUT',
       body: blob,
       headers: {
@@ -54,7 +54,7 @@ describe('Vercel Blob Server Integration Tests', () => {
 
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data.pathname).toBe('/test-file.txt');
+    expect(data.pathname).toBe('test-file.txt');
     expect(data.contentType).toBe('text/plain;charset=utf-8');
   });
 
@@ -63,7 +63,7 @@ describe('Vercel Blob Server Integration Tests', () => {
     const content = 'Test content for GET';
     const blob = new Blob([content], { type: 'text/plain' });
     
-    await fetch(`${BASE_URL}/get-test.txt`, {
+    await fetch(`${BASE_URL}/?pathname=get-test.txt`, {
       method: 'PUT',
       body: blob,
     });
@@ -82,7 +82,7 @@ describe('Vercel Blob Server Integration Tests', () => {
     const content = 'Download test';
     const blob = new Blob([content], { type: 'text/plain' });
     
-    await fetch(`${BASE_URL}/download-test.txt`, {
+    await fetch(`${BASE_URL}/?pathname=download-test.txt`, {
       method: 'PUT',
       body: blob,
       headers: {
@@ -102,17 +102,17 @@ describe('Vercel Blob Server Integration Tests', () => {
     const content = 'HEAD test content';
     const blob = new Blob([content], { type: 'text/plain' });
     
-    await fetch(`${BASE_URL}/head-test.txt`, {
+    await fetch(`${BASE_URL}/?pathname=head-test.txt`, {
       method: 'PUT',
       body: blob,
     });
 
     // HEAD request using the API format
-    const response = await fetch(`${BASE_URL}/?url=/head-test.txt`);
+    const response = await fetch(`${BASE_URL}/?url=head-test.txt`);
     
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data.pathname).toBe('/head-test.txt');
+    expect(data.pathname).toBe('head-test.txt');
     expect(data.size).toBe(content.length);
   });
 
@@ -121,19 +121,19 @@ describe('Vercel Blob Server Integration Tests', () => {
     const content = 'File to be copied';
     const blob = new Blob([content], { type: 'text/plain' });
     
-    await fetch(`${BASE_URL}/original.txt`, {
+    await fetch(`${BASE_URL}/?pathname=original.txt`, {
       method: 'PUT',
       body: blob,
     });
 
     // Copy the file
-    const response = await fetch(`${BASE_URL}/copied.txt?fromUrl=/original.txt`, {
+    const response = await fetch(`${BASE_URL}/?pathname=copied.txt&fromUrl=original.txt`, {
       method: 'PUT',
     });
     
     expect(response.status).toBe(200);
     const data = await response.json();
-    expect(data.pathname).toBe('/copied.txt');
+    expect(data.pathname).toBe('copied.txt');
 
     // Verify the copied file exists
     const getResponse = await fetch(`${BASE_URL}/copied.txt`);
@@ -147,7 +147,7 @@ describe('Vercel Blob Server Integration Tests', () => {
     const content = 'File to be deleted';
     const blob = new Blob([content], { type: 'text/plain' });
     
-    await fetch(`${BASE_URL}/delete-me.txt`, {
+    await fetch(`${BASE_URL}/?pathname=delete-me.txt`, {
       method: 'PUT',
       body: blob,
     });
@@ -179,7 +179,7 @@ describe('Vercel Blob Server Integration Tests', () => {
   });
 
   test('COPY - should return 404 when source file does not exist', async () => {
-    const response = await fetch(`${BASE_URL}/destination.txt?fromUrl=/non-existent-source.txt`, {
+    const response = await fetch(`${BASE_URL}/?pathname=destination.txt&fromUrl=/non-existent-source.txt`, {
       method: 'PUT',
     });
     expect(response.status).toBe(404);
@@ -189,7 +189,7 @@ describe('Vercel Blob Server Integration Tests', () => {
     const content = 'Cache control test';
     const blob = new Blob([content], { type: 'text/plain' });
     
-    const response = await fetch(`${BASE_URL}/cache-test.txt`, {
+    const response = await fetch(`${BASE_URL}/?pathname=cache-test.txt`, {
       method: 'PUT',
       body: blob,
       headers: {
@@ -208,7 +208,7 @@ describe('Vercel Blob Server Integration Tests', () => {
     const content = 'Nested directory test';
     const blob = new Blob([content], { type: 'text/plain' });
     
-    const response = await fetch(`${BASE_URL}/nested/dir/test.txt`, {
+    const response = await fetch(`${BASE_URL}/?pathname=nested/dir/test.txt`, {
       method: 'PUT',
       body: blob,
     });
