@@ -8,8 +8,12 @@ export default defineHandler({
   },
   async handle (url, request) {
     const isDownload = url.searchParams.get('download') === '1';
-    const metaFile = Bun.file(path.join(storePath, url.pathname + '._vercel_mock_meta_'));
-    const file = Bun.file(path.join(storePath, url.pathname));
+    const pathname = url.searchParams.get('pathname');
+    if (!pathname) {
+      return new Response(null, { status: 400 });
+    }
+    const metaFile = Bun.file(path.join(storePath, pathname + '._vercel_mock_meta_'));
+    const file = Bun.file(path.join(storePath, pathname));
     if (await metaFile.exists() && await file.exists()) {
       const data = await metaFile.json();
       const headers = new Headers({

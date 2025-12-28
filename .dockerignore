@@ -1,0 +1,37 @@
+# Git
+.git
+.gitignore
+.github
+
+# Dependencies
+node_modules
+npm-debug.log
+
+# Build artifacts
+dist
+
+# Testing
+test
+*.test.ts
+*.test.js
+
+# Documentation
+README.md
+*.md
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Misc
+.env
+.env.local
+*.log
+
